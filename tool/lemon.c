@@ -405,6 +405,7 @@ struct lemon {
   char *tokendest;         /* Code to execute to destroy token data */
   char *vardest;           /* Code for the default non-terminal destructor */
   char *filename;          /* Name of the input file */
+  char *basename;          /* Basename of inputer file (no directory or path) */
   char *outname;           /* Name of the current output file */
   char *tokenprefix;       /* A prefix added to token names in the .h file */
   int nconflict;           /* Number of parsing conflicts */
@@ -1475,6 +1476,41 @@ void memory_error(void){
   exit(1);
 }
 
+/* Locates the basename in a string possibly containing paths,
+ * including forward-slash and backward-slash delimiters on Windows,
+ * and allocates a new string containing just the basename.
+ * Returns the pointer to that string.
+ */
+PRIVATE char*
+make_basename(char* fullname)
+{
+  char *cp;
+  char *new_string;
+
+  /* Find the last forward slash */
+  cp = strrchr(fullname, '/');
+
+#ifdef _WIN32
+  /* On Windows, if no forward slash was found, look ofr
+   * backslash also */
+  if (!cp)
+    cp = strrchr(fullname, '\\');
+#endif
+
+  if (!cp) {
+    new_string = (char *) malloc( strlen(fullname) + 1 );
+    strcpy(new_string, fullname);
+  }
+  else {
+    /* skip the slash */
+    cp++;
+    new_string = (char *) malloc( strlen(cp) + 1 );
+    strcpy(new_string, cp);
+  }
+
+  return new_string;
+}
+
 static int nDefine = 0;      /* Number of -D options on the command line */
 static char **azDefine = 0;  /* Name of the -D macros */
 
@@ -1630,6 +1666,9 @@ int main(int argc _U_, char **argv)
   Symbol_new("$");
   lem.errsym = Symbol_new("error");
   lem.errsym->useCnt = 0;
+
+  lem.basename = make_basename(lem.filename);
+
 
   /* Parse the input file */
   Parse(&lem);
@@ -2980,6 +3019,18 @@ PRIVATE char *file_makename(struct lemon *lemp, const char *suffix)
   return name;
 }
 
+/* Generate a filename with the given suffix.  Uses only
+** the basename of the input file, not the entire path. This
+** is useful for creating output files when using outdirname.
+** Space to hold this name comes from malloc() and must be
+** freed by the calling function.
+*/
+PRIVATE char *file_makename_using_basename(struct lemon *lemp, const char *suffix)
+{
+  lemp->filename = lemp->basename;
+  return file_makename(lemp, suffix);
+}
+
 /* Open a file with a name based on the name of the input file,
 ** but with a different (specified) suffix, and return a pointer
 ** to the stream */
@@ -2991,7 +3042,7 @@ PRIVATE FILE *file_open(
   FILE *fp;
 
   if( lemp->outname ) free(lemp->outname);
-  lemp->outname = file_makename(lemp, suffix);
+  lemp->outname = file_makename_using_basename(lemp, suffix);
   fp = fopen(lemp->outname,mode);
   if( fp==0 && *mode=='w' ){
     fprintf(stderr,"Can't open file \"%s\".\n",lemp->outname);
