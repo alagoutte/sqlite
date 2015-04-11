@@ -3523,7 +3523,7 @@ PRIVATE char *append_str(const char *zText, int n, int p1, int p2){
     n = lemonStrlen(zText);
   }
   if( (int) (n+sizeof(zInt)*2+used) >= alloced ){
-    alloced = n + sizeof(zInt)*2 + used + 200;
+    alloced = (int)(n + sizeof(zInt)*2 + used + 200);
     z = (char *) realloc(z,  alloced);
   }
   if( z==0 ) return empty;
