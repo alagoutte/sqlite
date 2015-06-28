@@ -735,7 +735,7 @@ static void yy_parse_failed(
 */
 static void yy_syntax_error(
   yyParser *yypParser,           /* The parser */
-  int yymajor,                   /* The major type of the error token */
+  int yymajor _U_,               /* The major type of the error token */
   ParseTOKENTYPE yyminor         /* The minor type of the error token */
 ){
   ParseARG_FETCH;
