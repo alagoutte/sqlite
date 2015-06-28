@@ -588,15 +588,9 @@ static void yy_shift(
     assert( yypParser->yyhwm == (int)(yypParser->yytos - yypParser->yystack) );
   }
 #endif
-<<<<<<< HEAD
-#if YYSTACKDEPTH>0 
+#if YYSTACKDEPTH>0
   if( yypParser->yytos>=&yypParser->yystack[YYSTACKDEPTH] ){
     yyStackOverflow(yypParser);
-=======
-#if YYSTACKDEPTH>0
-  if( yypParser->yyidx>=YYSTACKDEPTH ){
-    yyStackOverflow(yypParser, yypMinor);
->>>>>>> LEMPAR: fix trailing whitespace
     return;
   }
 #else
@@ -644,12 +638,7 @@ static void yy_reduce(
   ParseARG_FETCH;
   yymsp = yypParser->yytos;
 #ifndef NDEBUG
-<<<<<<< HEAD
   if( yyTraceFILE && yyruleno<(int)(sizeof(yyRuleName)/sizeof(yyRuleName[0])) ){
-=======
-  if( yyTraceFILE && yyruleno>=0
-        && yyruleno<(int)(sizeof(yyRuleName)/sizeof(yyRuleName[0])) ){
->>>>>>> LEMPAR: fix trailing whitespace
     yysize = yyRuleInfo[yyruleno].nrhs;
     fprintf(yyTraceFILE, "%sReduce [%s], go to state %d.\n", yyTracePrompt,
       yyRuleName[yyruleno], yymsp[-yysize].stateno);
@@ -743,7 +732,7 @@ static void yy_parse_failed(
 */
 static void yy_syntax_error(
   yyParser *yypParser,           /* The parser */
-  int yymajor,                   /* The major type of the error token */
+  int yymajor _U_,               /* The major type of the error token */
   ParseTOKENTYPE yyminor         /* The minor type of the error token */
 ){
   ParseARG_FETCH;
@@ -936,16 +925,10 @@ void Parse(
     yyStackEntry *i;
     char cDiv = '[';
     fprintf(yyTraceFILE,"%sReturn. Stack=",yyTracePrompt);
-<<<<<<< HEAD
     for(i=&yypParser->yystack[1]; i<=yypParser->yytos; i++){
       fprintf(yyTraceFILE,"%c%s", cDiv, yyTokenName[i->major]);
       cDiv = ' ';
     }
-=======
-    for(i=1; i<=yypParser->yyidx; i++)
-      fprintf(yyTraceFILE,"%c%s", i==1 ? '[' : ' ',
-              yyTokenName[yypParser->yystack[i].major]);
->>>>>>> LEMPAR: fix trailing whitespace
     fprintf(yyTraceFILE,"]\n");
   }
 #endif
