@@ -2813,9 +2813,10 @@ void Parse(struct lemon *gp)
   filesize = ftell(fp);
   rewind(fp);
   filebuf = (char *)malloc( filesize+1 );
-  if( filesize>100000000 || filebuf==0 ){
+  if( filesize>100000000 || filebuf==NULL ){
     ErrorMsg(ps.filename,0,"Input file too large.");
     gp->errorcnt++;
+    free(filebuf);
     fclose(fp);
     return;
   }
