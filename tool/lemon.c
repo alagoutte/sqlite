@@ -1568,7 +1568,7 @@ static struct rule *Rule_merge(struct rule *pA, struct rule *pB){
 ** Sort a list of rules in order of increasing iRule value
 */
 static struct rule *Rule_sort(struct rule *rp){
-  int i;
+  unsigned int i;
   struct rule *pNext;
   struct rule *x[32];
   memset(x, 0, sizeof(x));
